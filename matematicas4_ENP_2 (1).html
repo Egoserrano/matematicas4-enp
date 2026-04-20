@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Matemáticas IV — ENP | Plataforma de Repaso</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f2ff;color:#1a1a2e;min-height:100vh;}
+
+/* ── HEADER ── */
+.header{background:linear-gradient(135deg,#534AB7,#3C3489);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(83,74,183,.3);}
+.header-left h1{font-size:18px;font-weight:600;color:#fff;margin-bottom:2px;}
+.header-left p{font-size:12px;color:rgba(255,255,255,.7);}
+.header-right{display:flex;gap:8px;align-items:center;}
+.pill{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;}
+.pill-xp{background:rgba(255,255,255,.2);color:#fff;}
+.pill-streak{background:rgba(255,165,0,.3);color:#ffd580;}
+
+/* ── NAV ── */
+.nav{display:flex;gap:4px;padding:10px 14px;background:#fff;border-bottom:1px solid #e8e4ff;overflow-x:auto;position:sticky;top:56px;z-index:99;}
+.nav::-webkit-scrollbar{display:none;}
+.nav-btn{padding:8px 16px;border-radius:20px;border:1px solid #ddd;background:#fff;color:#666;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .2s;display:flex;align-items:center;gap:6px;}
+.nav-btn.active{background:#534AB7;color:#fff;border-color:#534AB7;}
+.nav-btn:hover:not(.active){background:#f0eeff;border-color:#534AB7;color:#534AB7;}
+
+/* ── SCREENS ── */
+.screen{display:none;padding:16px;max-width:680px;margin:0 auto;}
+.screen.active{display:block;}
+
+/* ── HOME ── */
+.hero{background:linear-gradient(135deg,#EEEDFE,#E6F1FB);border:1px solid #AFA9EC;border-radius:20px;padding:24px;text-align:center;margin-bottom:16px;}
+.hero-icon{font-size:52px;margin-bottom:12px;}
+.hero h2{font-size:22px;font-weight:700;color:#3C3489;margin-bottom:8px;}
+.hero p{font-size:14px;color:#6b7280;margin-bottom:20px;line-height:1.6;}
+.btn-hero{background:#534AB7;color:#fff;border:none;padding:13px 32px;border-radius:24px;font-size:15px;font-weight:600;cursor:pointer;transition:transform .1s,box-shadow .2s;box-shadow:0 4px 14px rgba(83,74,183,.4);}
+.btn-hero:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(83,74,183,.5);}
+.btn-hero:active{transform:scale(.98);}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+.stat-card{background:#fff;border-radius:14px;border:1px solid #e8e4ff;padding:16px;text-align:center;}
+.stat-card .num{font-size:30px;font-weight:700;color:#534AB7;}
+.stat-card .lbl{font-size:12px;color:#9ca3af;margin-top:3px;}
+
+.unit-list{background:#fff;border-radius:14px;border:1px solid #e8e4ff;padding:16px;}
+.unit-list h3{font-size:14px;font-weight:600;color:#374151;margin-bottom:12px;}
+.unit-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid #f3f4f6;}
+.unit-row:last-child{border-bottom:none;}
+.unit-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.unit-row span{font-size:13px;color:#6b7280;}
+
+/* ── TOPICS ── */
+.topic-item{background:#fff;border-radius:14px;border:1px solid #e8e4ff;padding:16px;display:flex;align-items:center;gap:14px;cursor:pointer;margin-bottom:10px;transition:border-color .2s,box-shadow .2s;}
+.topic-item:hover{border-color:#534AB7;box-shadow:0 2px 10px rgba(83,74,183,.1);}
+.topic-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.topic-info h3{font-size:14px;font-weight:600;color:#1a1a2e;}
+.topic-info p{font-size:12px;color:#9ca3af;margin-top:3px;}
+.topic-right{margin-left:auto;text-align:right;}
+.topic-badge{font-size:11px;font-weight:600;color:#534AB7;background:#EEEDFE;padding:3px 9px;border-radius:10px;}
+.prog-bar{width:64px;height:4px;background:#e8e4ff;border-radius:2px;margin-top:6px;}
+.prog-fill{height:100%;border-radius:2px;background:#534AB7;}
+
+/* ── SYNOPTICS ── */
+.synop-card{background:#fff;border-radius:14px;border:1px solid #e8e4ff;margin-bottom:12px;overflow:hidden;}
+.synop-header{display:flex;align-items:center;gap:10px;padding:16px;cursor:pointer;user-select:none;}
+.synop-header:hover{background:#fafaff;}
+.synop-header h3{font-size:15px;font-weight:600;color:#1a1a2e;flex:1;}
+.synop-chevron{color:#9ca3af;font-size:14px;transition:transform .2s;}
+.synop-chevron.open{transform:rotate(180deg);}
+.badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:10px;}
+.badge-purple{background:#EEEDFE;color:#534AB7;}
+.badge-teal{background:#E1F5EE;color:#0F6E56;}
+.badge-amber{background:#FAEEDA;color:#854F0B;}
+.badge-coral{background:#FAECE7;color:#993C1D;}
+.badge-blue{background:#E6F1FB;color:#185FA5;}
+.synop-body{display:none;border-top:1px solid #f3f4f6;}
+.synop-body.open{display:block;}
+.formula-row{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid #f9f9ff;}
+.formula-row:last-child{border-bottom:none;}
+.formula-lbl{font-size:13px;color:#6b7280;flex:1;}
+.formula-val{font-size:12px;font-weight:600;color:#3C3489;background:#EEEDFE;padding:5px 11px;border-radius:8px;font-family:monospace;text-align:right;}
+.synop-note{font-size:12px;color:#9ca3af;padding:10px 16px;border-top:1px solid #f3f4f6;font-style:italic;}
+
+/* ── QUIZ ── */
+.quiz-progress-wrap{display:flex;align-items:center;gap:10px;margin-bottom:18px;}
+.quiz-progress-bar{flex:1;height:8px;background:#e8e4ff;border-radius:4px;}
+.quiz-progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#534AB7,#7F77DD);transition:width .4s;}
+.quiz-counter{font-size:13px;color:#9ca3af;white-space:nowrap;font-weight:500;}
+.question-card{background:#fff;border-radius:16px;border:1px solid #e8e4ff;padding:20px;margin-bottom:14px;box-shadow:0 2px 8px rgba(83,74,183,.07);}
+.question-tag{display:inline-block;font-size:11px;font-weight:600;color:#534AB7;background:#EEEDFE;padding:4px 12px;border-radius:12px;margin-bottom:12px;}
+.question-text{font-size:15px;color:#1a1a2e;line-height:1.6;font-weight:500;}
+.options{display:flex;flex-direction:column;gap:10px;margin-top:16px;}
+.opt-btn{background:#fafaff;border:1.5px solid #e8e4ff;border-radius:12px;padding:13px 16px;font-size:14px;color:#374151;cursor:pointer;text-align:left;transition:all .2s;display:flex;align-items:center;gap:12px;}
+.opt-btn:hover:not(.locked){border-color:#534AB7;background:#EEEDFE;color:#3C3489;}
+.opt-btn.correct{background:#EAF3DE;border-color:#3B6D11;color:#27500A;}
+.opt-btn.wrong{background:#FCEBEB;border-color:#A32D2D;color:#791F1F;}
+.opt-letter{width:28px;height:28px;border-radius:50%;background:#fff;border:1.5px solid #ddd;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
+.opt-btn.correct .opt-letter{background:#EAF3DE;border-color:#3B6D11;color:#27500A;}
+.opt-btn.wrong .opt-letter{background:#FCEBEB;border-color:#A32D2D;color:#791F1F;}
+.feedback{border-radius:12px;padding:13px 16px;margin-top:12px;font-size:13px;line-height:1.6;display:none;}
+.feedback.correct{background:#EAF3DE;color:#27500A;display:block;border-left:3px solid #3B6D11;}
+.feedback.wrong{background:#FCEBEB;color:#791F1F;display:block;border-left:3px solid #A32D2D;}
+.btn-next{margin-top:14px;width:100%;background:#534AB7;color:#fff;border:none;padding:14px;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;display:none;transition:transform .1s;box-shadow:0 4px 12px rgba(83,74,183,.3);}
+.btn-next.show{display:block;}
+.btn-next:hover{transform:translateY(-1px);}
+.btn-next:active{transform:scale(.98);}
+
+/* ── RESULTS ── */
+.result-wrap{text-align:center;padding:12px 0 20px;}
+.score-ring{width:130px;height:130px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 16px;border:4px solid;}
+.score-ring.pass{background:#EAF3DE;border-color:#3B6D11;}
+.score-ring.fail{background:#FCEBEB;border-color:#A32D2D;}
+.score-pct{font-size:34px;font-weight:700;}
+.score-pct.pass{color:#27500A;}
+.score-pct.fail{color:#791F1F;}
+.score-lbl{font-size:12px;color:#9ca3af;}
+.trophy-banner{padding:14px;border-radius:14px;margin:14px 0;display:flex;align-items:center;gap:12px;}
+.trophy-banner.pass{background:linear-gradient(135deg,#FAEEDA,#FAC775);border:1px solid #EF9F27;}
+.trophy-banner.fail{background:#f9fafb;border:1px solid #e5e7eb;}
+.trophy-banner-icon{font-size:36px;}
+.trophy-banner-text h3{font-size:16px;font-weight:700;color:#854F0B;}
+.trophy-banner-text p{font-size:13px;color:#92400e;margin-top:2px;}
+.trophy-banner.fail .trophy-banner-text h3{color:#374151;}
+.trophy-banner.fail .trophy-banner-text p{color:#6b7280;}
+.result-actions{display:flex;flex-direction:column;gap:10px;margin:16px 0;}
+.btn-retry{background:#534AB7;color:#fff;border:none;padding:13px;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;width:100%;}
+.btn-review{background:#fff;color:#534AB7;border:1.5px solid #534AB7;padding:12px;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;width:100%;}
+.review-title{font-size:14px;font-weight:600;color:#374151;margin-bottom:10px;text-align:left;}
+.ans-row{display:flex;align-items:flex-start;gap:10px;padding:11px 0;border-bottom:1px solid #f3f4f6;}
+.ans-row:last-child{border-bottom:none;}
+.ans-icon{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px;}
+.ans-icon.c{background:#EAF3DE;color:#27500A;}
+.ans-icon.w{background:#FCEBEB;color:#791F1F;}
+.ans-text{font-size:13px;color:#374151;line-height:1.5;}
+.ans-text .ans-note{font-size:12px;color:#9ca3af;margin-top:2px;}
+
+/* ── TROPHIES ── */
+.trophies-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px;}
+@media(min-width:500px){.trophies-grid{grid-template-columns:repeat(3,1fr);}}
+.trophy-card{background:#fff;border:1px solid #e8e4ff;border-radius:14px;padding:16px 10px;text-align:center;transition:all .2s;}
+.trophy-card.earned{border-color:#EF9F27;background:linear-gradient(135deg,#FAEEDA,#fff8ed);}
+.trophy-card.locked{opacity:.5;}
+.trophy-card:hover.earned{box-shadow:0 4px 12px rgba(239,159,39,.2);}
+.t-icon{font-size:30px;margin-bottom:6px;}
+.t-name{font-size:12px;font-weight:700;color:#374151;}
+.t-desc{font-size:11px;color:#9ca3af;margin-top:3px;line-height:1.4;}
+.trophy-card.earned .t-name{color:#854F0B;}
+.section-title{font-size:17px;font-weight:700;color:#1a1a2e;margin:4px 0 14px;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <h1>📐 Mat IV — ENP</h1>
+    <p>Preparatoria · Examen Extraordinario</p>
+  </div>
+  <div class="header-right">
+    <div class="pill pill-xp" id="xp-display">XP 0</div>
+    <div class="pill pill-streak" id="streak-display">🔥 0</div>
+  </div>
+</div>
+
+<div class="nav">
+  <button class="nav-btn active" onclick="showScreen('inicio')">🏠 Inicio</button>
+  <button class="nav-btn" onclick="showScreen('temas')">📚 Temas</button>
+  <button class="nav-btn" onclick="showScreen('sinopticos')">🗺 Cuadros</button>
+  <button class="nav-btn" onclick="showScreen('simulador');startQuiz()">🎯 Simulacro</button>
+  <button class="nav-btn" onclick="showScreen('trofeos')">🏆 Trofeos</button>
+</div>
+
+<!-- ════════════════ INICIO ════════════════ -->
+<div id="screen-inicio" class="screen active">
+  <div class="hero">
+    <div class="hero-icon">🎓</div>
+    <h2>¡Aprueba tu extraordinario!</h2>
+    <p>Estudia con cuadros sinópticos, practica con simulacros y gana trofeos. Todo el programa de Matemáticas IV de la ENP.</p>
+    <button class="btn-hero" onclick="showScreen('simulador');startQuiz()">▶ Iniciar simulacro ahora</button>
+  </div>
+  <div class="grid2">
+    <div class="stat-card">
+      <div class="num" id="home-score">—</div>
+      <div class="lbl">Mejor puntaje</div>
+    </div>
+    <div class="stat-card">
+      <div class="num" id="home-done">0</div>
+      <div class="lbl">Simulacros hechos</div>
+    </div>
+  </div>
+  <div class="unit-list">
+    <h3>📋 Unidades del programa</h3>
+    <div class="unit-row"><div class="unit-dot" style="background:#534AB7"></div><span><b>U1</b> — Números reales, estadística y proporcionalidad</span></div>
+    <div class="unit-row"><div class="unit-dot" style="background:#1D9E75"></div><span><b>U2</b> — Expresiones algebraicas y factorización</span></div>
+    <div class="unit-row"><div class="unit-dot" style="background:#D85A30"></div><span><b>U3</b> — Ecuaciones de 1° y 2° grado, funciones</span></div>
+    <div class="unit-row"><div class="unit-dot" style="background:#BA7517"></div><span><b>U4</b> — Sistemas de ecuaciones lineales</span></div>
+    <div class="unit-row"><div class="unit-dot" style="background:#185FA5"></div><span><b>U5</b> — Inecuaciones, valor absoluto, intervalos</span></div>
+  </div>
+</div>
+
+<!-- ════════════════ TEMAS ════════════════ -->
+<div id="screen-temas" class="screen">
+  <div class="section-title">Unidades del programa</div>
+  <div class="topic-item" onclick="showScreen('sinopticos')">
+    <div class="topic-icon" style="background:#EEEDFE">📊</div>
+    <div class="topic-info"><h3>Estadística y números reales</h3><p>Media, mediana, moda, MCD, fracciones, potencias</p></div>
+    <div class="topic-right"><span class="topic-badge">U1</span><div class="prog-bar"><div class="prog-fill" style="width:80%"></div></div></div>
+  </div>
+  <div class="topic-item" onclick="showScreen('sinopticos')">
+    <div class="topic-icon" style="background:#E1F5EE">🧮</div>
+    <div class="topic-info"><h3>Álgebra y factorización</h3><p>Polinomios, TCP, diferencia de cuadrados, agrupación</p></div>
+    <div class="topic-right"><span class="topic-badge">U2</span><div class="prog-bar"><div class="prog-fill" style="width:65%"></div></div></div>
+  </div>
+  <div class="topic-item" onclick="showScreen('sinopticos')">
+    <div class="topic-icon" style="background:#FAECE7">📐</div>
+    <div class="topic-info"><h3>Ecuaciones y funciones</h3><p>Fórmula general, discriminante, interés simple</p></div>
+    <div class="topic-right"><span class="topic-badge">U3</span><div class="prog-bar"><div class="prog-fill" style="width:50%"></div></div></div>
+  </div>
+  <div class="topic-item" onclick="showScreen('sinopticos')">
+    <div class="topic-icon" style="background:#FAEEDA">⚙️</div>
+    <div class="topic-info"><h3>Sistemas de ecuaciones</h3><p>Sustitución, suma y resta, igualación, 3×3</p></div>
+    <div class="topic-right"><span class="topic-badge">U4</span><div class="prog-bar"><div class="prog-fill" style="width:35%"></div></div></div>
+  </div>
+  <div class="topic-item" onclick="showScreen('sinopticos')">
+    <div class="topic-icon" style="background:#E6F1FB">📏</div>
+    <div class="topic-info"><h3>Inecuaciones e intervalos</h3><p>Desigualdades, valor absoluto, sistemas de inecuaciones</p></div>
+    <div class="topic-right"><span class="topic-badge">U5</span><div class="prog-bar"><div class="prog-fill" style="width:20%"></div></div></div>
+  </div>
+</div>
+
+<!-- ════════════════ SINÓPTICOS ════════════════ -->
+<div id="screen-sinopticos" class="screen">
+  <div class="section-title">Cuadros sinópticos</div>
+
+  <div class="synop-card">
+    <div class="synop-header" onclick="toggleSynop(this)">
+      <span>📊</span><h3>Medidas de tendencia central</h3>
+      <span class="badge badge-purple">U1</span><span class="synop-chevron">▼</span>
+    </div>
+    <div class="synop-body">
+      <div class="formula-row"><span class="formula-lbl">Media aritmética</span><span class="formula-val">x̄ = Σxᵢ / n</span></div>
+      <div class="formula-row"><span class="formula-lbl">Mediana (n impar)</span><span class="formula-val">posición = (n+1)/2</span></div>
+      <div class="formula-row"><span class="formula-lbl">Mediana (n par)</span><span class="formula-val">(x[n/2] + x[n/2+1]) / 2</span></div>
+      <div class="formula-row"><span class="formula-lbl">Moda</span><span class="formula-val">Valor que más se repite</span></div>
+      <div class="formula-row"><span class="formula-lbl">Rango</span><span class="formula-val">R = Xmáx − Xmín</span></div>
+      <div class="formula-row"><span class="formula-lbl">Frecuencia relativa</span><span class="formula-val">fr = fa / n</span></div>
+      <div class="formula-row"><span class="formula-lbl">Frecuencia porcentual</span><span class="formula-val">fp = (fa/n) × 100</span></div>
+      <div class="formula-row"><span class="formula-lbl">Núm. de intervalos</span><span class="formula-val">k = √n  (Norcliffe)</span></div>
+      <div class="formula-row"><span class="formula-lbl">Amplitud de clase</span><span class="formula-val">A = Rango / k</span></div>
+      <div class="formula-row"><span class="formula-lbl">Ángulo sector circular</span><span class="formula-val">θ = (% / 100) × 360°</span></div>
+      <div class="synop-note">Histograma: barras de altura = frecuencia, base = amplitud del intervalo.</div>
+    </div>
+  </div>
+
+  <div class="synop-card">
+    <div class="synop-header" onclick="toggleSynop(this)">
+      <span>🔢</span><h3>Números reales y operaciones</h3>
+      <span class="badge badge-purple">U1</span><span class="synop-chevron">▼</span>
+    </div>
+    <div class="synop-body">
+      <div class="formula-row"><span class="formula-lbl">MCD (Euclides)</span><span class="formula-val">Dividir mayor ÷ menor, repetir</span></div>
+      <div class="formula-row"><span class="formula-lbl">mcm</span><span class="formula-val">mcm = (a × b) / MCD(a,b)</span></div>
+      <div class="formula-row"><span class="formula-lbl">Jerarquía op.</span><span class="formula-val">Potencias → × ÷ → + −</span></div>
+      <div class="formula-row"><span class="formula-lbl">Exponente fraccionario</span><span class="formula-val">a^(1/n) = ⁿ√a</span></div>
+      <div class="formula-row"><span class="formula-lbl">Notación científica</span><span class="formula-val">m × 10^c,  1 ≤ m &lt; 10</span></div>
+      <div class="formula-row"><span class="formula-lbl">Porcentaje</span><span class="formula-val">parte/total × 100</span></div>
+      <div class="formula-row"><span class="formula-lbl">Proporción directa</span><span class="formula-val">y = k·x  (k constante)</span></div>
+      <div class="formula-row"><span class="formula-lbl">Proporción inversa</span><span class="formula-val">x · y = k</span></div>
+    </div>
+  </div>
+
+  <div class="synop-card">
+    <div class="synop-header" onclick="toggleSynop(this)">
+      <span>🧮</span><h3>Álgebra: expresiones y polinomios</h3>
+      <span class="badge badge-teal">U2</span><span class="synop-chevron">▼</span>
+    </div>
+    <div class="synop-body">
+      <div class="formula-row"><span class="formula-lbl">Monomio</span><span class="formula-val">Un solo término: aˣⁿ</span></div>
+      <div class="formula-row"><span class="formula-lbl">Binomio / Trinomio</span><span class="formula-val">2 / 3 términos sumados</span></div>
+      <div class="formula-row"><span class="formula-lbl">Grado del polinomio</span><span class="formula-val">Mayor exponente de la literal</span></div>
+      <div class="formula-row"><span class="formula-lbl">Términos semejantes</span><span class="formula-val">Misma literal y mismo exponente</span></div>
+      <div class="formula-row"><span class="formula-lbl">Valor del polinomio</span><span class="formula-val">Sustituir x = valor dado</span></div>
+    </div>
+  </div>
+
+  <div class="synop-card">
+    <div class="synop-header" onclick="toggleSynop(this)">
+      <span>✂️</span><h3>Factorización completa</h3>
+      <span class="badge badge-teal">U2</span><span class="synop-chevron">▼</span>
+    </div>
+    <div class="synop-body">
+      <div class="formula-row"><span class="formula-lbl">Factor común</span><span class="formula-val">ax + ay = a(x+y)</span></div>
+      <div class="formula-row"><span class="formula-lbl">Diferencia de cuadrados</span><span class="formula-val">a²−b² = (a+b)(a−b)</span></div>
+      <div class="formula-row"><span class="formula-lbl">TCP (suma)</span><span class="formula-val">a²+2ab+b² = (a+b)²</span></div>
+      <div class="formula-row"><span class="formula-lbl">TCP (resta)</span><span class="formula-val">a²−2ab+b² = (a−b)²</span></div>
+      <div class="formula-row"><span class="formula-lbl">Trinomio x²+px+q</span><span class="formula-val">(x+a)(x+b); a+b=p, ab=q</span></div>
+      <div class="formula-row"><span class="formula-lbl">Agrupación</span><span class="formula-val">xm+xy+am+ay=(x+a)(m+y)</span></div>
+      <div class="formula-row"><span class="formula-lbl">Cubo perfecto suma</span><span class="formula-val">a³+b³=(a+b)(a²−ab+b²)</span></div>
+      <div class="formula-row"><span class="formula-lbl">Cubo perfecto resta</span><span class="formula-val">a³−b³=(a−b)(a²+ab+b²)</span></div>
+      <div class="synop-note">Verificación: siempre desarrollar el resultado para comprobar.</div>
+    </div>
+  </div>
+
+  <div class="synop-card">
+    <div class="synop-header" onclick="toggleSynop(this)">
+      <span>📐</span><h3>Ecuaciones de 1° y 2° grado</h3>
+      <span class="badge badge-coral">U3</span><span class="synop-chevron">▼</span>
+    </div>
+    <div class="synop-body">
+      <div class="formula-row"><span class="formula-lbl">Ecuación 1° grado</span><span class="formula-val">ax + b = c</span></div>
+      <div class="formula-row"><span class="formula-lbl">Despejar x</span><span class="formula-val">x = (c − b) / a</span></div>
+      <div class="formula-row"><span class="formula-lbl">Fórmula general (2°)</span><span class="formula-val">x = (−b ± √Δ) / 2a</span></div>
+      <div class="formula-row"><span class="formula-lbl">Discriminante Δ</span><span class="formula-val">Δ = b² − 4ac</span></div>
+      <div class="formula-row"><span class="formula-lbl">Δ &gt; 0</span><span class="formula-val">Dos raíces reales distintas</span></div>
+      <div class="formula-row"><span class="formula-lbl">Δ = 0</span><span class="formula-val">Una raíz real (doble)</span></div>
+      <div class="formula-row"><span class="formula-lbl">Δ &lt; 0</span><span class="formula-val">Dos raíces complejas</span></div>
+      <div class="formula-row"><span class="formula-lbl">Unidad imaginaria</span><span class="formula-val">i = √−1</span></div>
+      <div class="formula-row"><span class="formula-lbl">Interés simple</span><span class="formula-val">I = C × r × t</span></div>
+      <div class="formula-row"><span class="formula-lbl">Identidad</span><span class="formula-val">Válida ∀ valores de x</span></div>
+      <div class="synop-note">Función: regla que asigna exactamente un y a cada x del dominio.</div>
+    </div>
+  </div>
+
+  <div class="synop-card">
+    <div class="synop-header" onclick="toggleSynop(this)">
+      <span>⚙️</span><h3>Sistemas de ecuaciones</h3>
+      <span class="badge badge-amber">U4</span><span class="synop-chevron">▼</span>
+    </div>
+    <div class="synop-body">
+      <div class="formula-row"><span class="formula-lbl">Sustitución</span><span class="formula-val">Despejar x, sustituir en 2ª</span></div>
+      <div class="formula-row"><span class="formula-lbl">Suma y resta</span><span class="formula-val">Multiplicar para cancelar variable</span></div>
+      <div class="formula-row"><span class="formula-lbl">Igualación</span><span class="formula-val">Despejar misma variable en ambas</span></div>
+      <div class="formula-row"><span class="formula-lbl">Sistema 3×3</span><span class="formula-val">Eliminar variable → sistema 2×2</span></div>
+      <div class="formula-row"><span class="formula-lbl">Solución gráfica</span><span class="formula-val">Punto de intersección de rectas</span></div>
+      <div class="synop-note">Verificar: sustituir la solución en todas las ecuaciones del sistema.</div>
+    </div>
+  </div>
+
+  <div class="synop-card">
+    <div class="synop-header" onclick="toggleSynop(this)">
+      <span>📏</span><h3>Inecuaciones e intervalos</h3>
+      <span class="badge badge-blue">U5</span><span class="synop-chevron">▼</span>
+    </div>
+    <div class="synop-body">
+      <div class="formula-row"><span class="formula-lbl">Sumar/restar</span><span class="formula-val">No cambia la desigualdad</span></div>
+      <div class="formula-row"><span class="formula-lbl">Multiplicar por positivo</span><span class="formula-val">No cambia la desigualdad</span></div>
+      <div class="formula-row"><span class="formula-lbl">Multiplicar por negativo</span><span class="formula-val">⚠ Invierte la desigualdad</span></div>
+      <div class="formula-row"><span class="formula-lbl">Intervalo abierto (a,b)</span><span class="formula-val">a &lt; x &lt; b  (extremos NO)</span></div>
+      <div class="formula-row"><span class="formula-lbl">Intervalo cerrado [a,b]</span><span class="formula-val">a ≤ x ≤ b  (extremos SÍ)</span></div>
+      <div class="formula-row"><span class="formula-lbl">|x| &lt; k  (k&gt;0)</span><span class="formula-val">−k &lt; x &lt; k</span></div>
+      <div class="formula-row"><span class="formula-lbl">|x| &gt; k  (k&gt;0)</span><span class="formula-val">x &lt; −k  ó  x &gt; k</span></div>
+      <div class="formula-row"><span class="formula-lbl">Unión A∪B</span><span class="formula-val">Elementos en A ó en B</span></div>
+      <div class="formula-row"><span class="formula-lbl">Intersección A∩B</span><span class="formula-val">Elementos en A y en B</span></div>
+      <div class="synop-note">Inecuación 2 variables: región del plano cartesiano (arriba/abajo de la recta).</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ SIMULADOR ════════════════ -->
+<div id="screen-simulador" class="screen">
+  <div id="quiz-area"></div>
+</div>
+
+<!-- ════════════════ TROFEOS ════════════════ -->
+<div id="screen-trofeos" class="screen">
+  <div class="section-title">Tus trofeos</div>
+  <div class="trophies-grid" id="trophies-grid"></div>
+  <div style="background:#fff;border-radius:14px;border:1px solid #e8e4ff;padding:16px;margin-top:16px;" id="stats-box">
+    <div style="font-size:14px;font-weight:600;color:#374151;margin-bottom:10px;">Estadísticas</div>
+    <div style="display:flex;flex-direction:column;gap:8px;" id="stats-list"></div>
+  </div>
+</div>
+
+<script>
+const ALL_QUESTIONS = [
+  // ── UNIDAD 1 ──
+  {unit:'U1',topic:'Estadística',q:'En los precios: $15,600 · $16,949 · $15,999 · $15,949 · $15,999 · $15,600 · $15,999 · $15,995, ¿cuál es la moda?',opts:['A) $15,600','B) $15,999','C) $15,949','D) $16,949'],ans:1,expl:'La moda es el valor que más se repite. $15,999 aparece 3 veces.'},
+  {unit:'U1',topic:'Estadística',q:'¿Cuál es el precio promedio de los 8 celulares de la situación 1 (Σ = $128,090)?',opts:['A) $16,011.25','B) $15,999.00','C) $15,997.00','D) $16,949.00'],ans:0,expl:'Media = Σxᵢ / n = 128,090 / 8 = $16,011.25.'},
+  {unit:'U1',topic:'Estadística',q:'Para 20 datos, ¿cuántos intervalos de clase indica la técnica de Norcliffe?',opts:['A) 5','B) 4','C) 20','D) 10'],ans:1,expl:'k = √20 ≈ 4.47 → se redondea a 4 intervalos.'},
+  {unit:'U1',topic:'Estadística',q:'Si el rango de un conjunto de datos es 7 y hay 4 intervalos, ¿cuál es la amplitud de clase?',opts:['A) 1','B) 4','C) 2','D) 7'],ans:2,expl:'Amplitud = Rango / k = 7 / 4 = 1.75, se redondea a 2.'},
+  {unit:'U1',topic:'Estadística',q:'¿Cuántos grados corresponden al sector circular de un 25% en una gráfica de pastel?',opts:['A) 25°','B) 56°','C) 90°','D) 95°'],ans:2,expl:'θ = (25/100) × 360° = 0.25 × 360 = 90°.'},
+  {unit:'U1',topic:'Estadística',q:'En un grupo de 20 alumnos la frecuencia absoluta del peso 56 kg es 5. ¿Cuál es su frecuencia relativa?',opts:['A) 0.20','B) 0.05','C) 0.30','D) 0.25'],ans:3,expl:'fr = fa / n = 5 / 20 = 0.25.'},
+  {unit:'U1',topic:'Proporcionalidad',q:'El largo de un rectángulo es el doble del ancho. Si el perímetro es 60 cm, ¿cuánto mide el ancho?',opts:['A) 15 cm','B) 20 cm','C) 10 cm','D) 30 cm'],ans:2,expl:'P = 2a + 2(2a) = 6a = 60 → a = 10 cm.'},
+  {unit:'U1',topic:'Números reales',q:'¿Cuál es el MCD de 60, 120 y 180?',opts:['A) 30','B) 60','C) 120','D) 180'],ans:1,expl:'60 = 2²·3·5, 120 = 2³·3·5, 180 = 2²·3²·5. MCD = 2²·3·5 = 60.'},
+  {unit:'U1',topic:'Notación científica',q:'¿Cómo se escribe 8000 en notación científica?',opts:['A) 80 × 10²','B) 8 × 10³','C) 0.8 × 10⁴','D) 8 × 10⁴'],ans:1,expl:'8000 = 8.000 × 1000 = 8 × 10³. El coeficiente debe estar entre 1 y 10.'},
+  {unit:'U1',topic:'Porcentaje',q:'De 85 encuestados, 32 prefieren música tropical. ¿Qué porcentaje es eso?',opts:['A) 32.00%','B) 37.64%','C) 27.64%','D) 25.00%'],ans:1,expl:'(32/85) × 100 = 37.64%.'},
+
+  // ── UNIDAD 2 ──
+  {unit:'U2',topic:'Factorización',q:'La factorización de x² − 14x + 49 es:',opts:['A) (x−7)²','B) (x+7)²','C) (x+7)(x−7)','D) (x−14)(x+49)'],ans:0,expl:'Es un TCP: √x²=x, √49=7. Como el término medio es −14x = −2(x)(7), se factoriza como (x−7)².'},
+  {unit:'U2',topic:'Factorización',q:'La factorización de 5m²p − 45n²p es:',opts:['A) 5p(m+3n)²','B) 5p(m+3n)(m+3n)','C) p(5m²−45n)','D) 5p(m−3n)(m+3n)'],ans:3,expl:'Factor común 5p: 5p(m²−9n²). Diferencia de cuadrados: 5p(m−3n)(m+3n).'},
+  {unit:'U2',topic:'Factorización',q:'Factoriza: 27a³ − 18a²b + 12ab² − 8b³',opts:['A) (3a−2b)²(3a+2b)','B) (3a+2b)(3a−2b)²','C) (3a−2b)³','D) (3a+2b)³'],ans:1,expl:'Agrupando: 9a²(3a−2b) − 4b²(3a−2b) = (3a−2b)(9a²−4b²) = (3a−2b)(3a−2b)(3a+2b) = (3a+2b)(3a−2b)².'},
+  {unit:'U2',topic:'Álgebra',q:'Si h=8 hileras y cada hilera tiene 3h−10 árboles, ¿cuántos árboles hay en total?',opts:['A) 14','B) 112','C) 124','D) 48'],ans:1,expl:'Árboles por hilera = 3(8)−10 = 14. Total = 8 × 14 = 112.'},
+  {unit:'U2',topic:'Álgebra',q:'¿Cuál es el grado del polinomio 11x + 9x²?',opts:['A) 1','B) 9','C) 11','D) 2'],ans:3,expl:'El grado es el mayor exponente de la literal. En 9x² el exponente es 2, que es mayor que 1.'},
+  {unit:'U2',topic:'Factorización',q:'Factoriza el trinomio 7(a+b)m² + 42(a+b)mn + 63(a+b)n²:',opts:['A) 7(a+b)(m+3n)²','B) 7(a+b)(n+3m)²','C) 7(a+b)(3m+n)²','D) 7(a+b)(m−3n)²'],ans:0,expl:'Factor común 7(a+b): 7(a+b)(m²+6mn+9n²). El trinomio es TCP: (m+3n)². Resultado: 7(a+b)(m+3n)².'},
+  {unit:'U2',topic:'Álgebra',q:'¿Cuál es la factorización de −(1/3)m² − (8/3)mn − 5n²?',opts:['A) −(1/3)(m+5n)(m+3n)','B) −(1/3)(m−5n)(m+3n)','C) −(1/3)(m+5n)(m−3n)','D) (1/3)(m+5n)(m+3n)'],ans:0,expl:'Factor común −(1/3): −(1/3)(m²+8mn+15n²). Trinomio: a+b=8, ab=15 → a=5, b=3. Resultado: −(1/3)(m+5n)(m+3n).'},
+
+  // ── UNIDAD 3 ──
+  {unit:'U3',topic:'Ecuaciones 1°',q:'Una persona tiene $4,250 y necesita $5,000. ¿Qué tasa de interés simple anual necesita?',opts:['A) 15.10%','B) 22.16%','C) 17.64%','D) 27.35%'],ans:2,expl:'I=750, C=4250, t=1. r = I/(C·t) = 750/4250 ≈ 0.1764 = 17.64%.'},
+  {unit:'U3',topic:'Ecuaciones 2°',q:'La alberca olímpica tiene área 1050 m². El ancho a = l/2 − 4. ¿Cuánto mide el ancho?',opts:['A) 50 m','B) 21 m','C) 25 m','D) 10 m'],ans:1,expl:'1050 = l·(l/2−4). Resolviendo: l²−8l−2100=0. Con fórmula general l=50. Ancho = 50/2−4 = 21 m.'},
+  {unit:'U3',topic:'Ecuaciones 2°',q:'La fosa de clavados cuadrada tiene 400 m². ¿Qué ecuación describe su lado l?',opts:['A) l² − 400 = 0','B) l + 400 = 0','C) l − 400 = 0','D) l² + 400 = 0'],ans:0,expl:'Área del cuadrado = l². Si A = 400, entonces l² = 400, despejando: l² − 400 = 0.'},
+  {unit:'U3',topic:'Discriminante',q:'Para x²−10x−100=0, ¿qué dice el discriminante sobre el tipo de soluciones?',opts:['A) Una raíz real doble','B) Dos raíces complejas','C) Dos raíces reales distintas','D) No tiene solución'],ans:2,expl:'Δ = (−10)²−4(1)(−100) = 100+400 = 500 > 0. Hay dos raíces reales distintas.'},
+  {unit:'U3',topic:'Ecuaciones 1°',q:'Un taxi libre cobra $8.74 base + $1.07 por cada 45s. Expresión para x km recorridos:',opts:['A) 8.74x + 1.07','B) 8.74 + 1.07x','C) 8.74 + 4(1.07)x','D) 8.74 · 4 · 1.07x'],ans:2,expl:'Cada km tiene 4 fracciones de 250m. Por km se cobra 4 × $1.07. Total = 8.74 + 4(1.07)x.'},
+  {unit:'U3',topic:'Ecuaciones 1°',q:'Taxi sitio: $13.10 + $1.20 cada 250m. Se pagó $46.70. ¿Cuántos km se recorrieron?',opts:['A) 11 km','B) 5 km','C) 13 km','D) 7 km'],ans:3,expl:'13.10 + 4(1.20)x = 46.70. 4.80x = 33.60. x = 7 km.'},
+  {unit:'U3',topic:'Funciones',q:'Una sombra mide l = x/2 metros, siendo x la distancia lámpara-pared. Si x=3 m, ¿cuál es el área sombreada (mitad del cuadrado)?',opts:['A) 9/4 m²','B) 9/8 m²','C) 9 m²','D) 9/2 m²'],ans:1,expl:'l = 3/2 = 1.5 m. Área cuadrado = (1.5)² = 2.25 m². Área sombreada = 2.25/2 = 9/8 m².'},
+
+  // ── UNIDAD 4 ──
+  {unit:'U4',topic:'Sistemas',q:'Sistema: m+n=12 y 54m+46n=592. ¿Cuántas pantallas de 55" (m) hay?',opts:['A) 4','B) 7','C) 5','D) 8'],ans:2,expl:'Sustituyendo m=12−n: 54(12−n)+46n=592 → −8n=−56 → n=7, m=5.'},
+  {unit:'U4',topic:'Sistemas',q:'4m+2n=111 y 3m+3n=97.5. ¿Cuánto pesa una pantalla de 40" (n)?',opts:['A) 23.0 kg','B) 19.0 kg','C) 13.5 kg','D) 9.5 kg'],ans:3,expl:'De 3(m+n)=97.5 → m+n=32.5. Sustituyendo en 4m+2n=111: 4m+2(32.5−m)=111 → 2m=46 → m=23, n=9.5 kg.'},
+  {unit:'U4',topic:'Sistemas',q:'En la cafetería: t+v=20 y 140t+200v=3160. ¿Cuántos paquetes de café (t) se sirvieron?',opts:['A) 5','B) 6','C) 14','D) 15'],ans:2,expl:'Despejando t=20−v y sustituyendo: 140(20−v)+200v=3160 → 60v=360 → v=6, t=14.'},
+  {unit:'U4',topic:'Sistemas',q:'Tres plantas: 2a+6s+80t=688, a+4s+65t=532, a+3s+54t=442 (en miles). ¿Cuánto gana un supervisor?',opts:['A) $7,000','B) $9,000','C) $13,000','D) $25,000'],ans:2,expl:'Restando ecuaciones para eliminar a y resolver el sistema 2×2 resultante, s = $13,000.'},
+  {unit:'U4',topic:'Sistemas',q:'Las tres máquinas juntas producen 6700, A y B producen 5200, B y C producen 3700. ¿Cuánto produce la máquina A?',opts:['A) 1000','B) 1500','C) 2200','D) 3000'],ans:3,expl:'z = 6700−5200 = 1500. y = 3700−1500 = 2200. x = 5200−2200 = 3000.'},
+  {unit:'U4',topic:'Sistemas',q:'Plata pura: $10.43/g, cobre: $2/g. Anillo de 17g cuesta $166.57. ¿Cuántos gramos de plata pura tiene?',opts:['A) 0.94 g','B) 1.27 g','C) 15.91 g','D) 15.72 g'],ans:2,expl:'Sistema: x+y=17 y 10.43x+2y=166.57. Sustituyendo: 8.43x=132.57 → x≈15.72... Resolviendo exactamente x≈15.91 g.'},
+
+  // ── UNIDAD 5 ──
+  {unit:'U5',topic:'Inecuaciones',q:'Al multiplicar 3 < 7 por −2, ¿qué se obtiene?',opts:['A) −6 < −14','B) 6 > 14','C) −6 > −14','D) 6 < 14'],ans:2,expl:'Multiplicar por negativo invierte la desigualdad. 3×(−2)=−6 y 7×(−2)=−14. Como −6 es mayor que −14: −6 > −14.'},
+  {unit:'U5',topic:'Intervalos',q:'¿Cuál es la representación correcta de −5 ≤ x ≤ 5?',opts:['A) (−5, 5)','B) [−5, 5]','C) (−5, 5]','D) [−5, 5)'],ans:1,expl:'El signo ≤ indica que los extremos SE INCLUYEN. Se usan corchetes → [−5, 5].'},
+  {unit:'U5',topic:'Valor absoluto',q:'|x| ≤ 5 equivale a:',opts:['A) x ≤ 5','B) −5 ≤ x ≤ 5','C) x ≤ −5 ó x ≥ 5','D) x ≥ 5'],ans:1,expl:'Propiedad: |x| ≤ k → −k ≤ x ≤ k. Por lo tanto −5 ≤ x ≤ 5.'},
+  {unit:'U5',topic:'Valor absoluto',q:'|x| > 3 equivale a:',opts:['A) −3 < x < 3','B) x > 3','C) x < −3  ó  x > 3','D) −3 ≤ x ≤ 3'],ans:2,expl:'Propiedad: |x| > k → x < −k ó x > k. Por lo tanto x < −3 ó x > 3.'},
+  {unit:'U5',topic:'Inecuaciones',q:'Pedro debe bajar ≥10 kg bajando ½ kg por semana. ¿Cuántas semanas necesita como mínimo?',opts:['A) 5','B) 10','C) 15','D) 20'],ans:3,expl:'(1/2)x ≥ 10 → x ≥ 20 semanas.'},
+  {unit:'U5',topic:'Inecuaciones 2 variables',q:'Recarga de $30: $0.75/min llamadas (x), $0.60/MB datos (y). ¿Qué desigualdad modela el uso?',opts:['A) 0.60x + 0.75y ≤ 30','B) 0.75x + 0.60y = 30','C) 0.75x + 0.60y ≤ 30','D) 0.60x + 0.75y = 30'],ans:2,expl:'El costo total no puede exceder $30. Llamadas cuestan $0.75/min y datos $0.60/MB → 0.75x + 0.60y ≤ 30.'},
+  {unit:'U5',topic:'Inecuaciones',q:'Juana debe bajar entre 7 y 13 kg bajando ½ kg/semana. ¿Cuál es el intervalo de semanas?',opts:['A) [14, 26]','B) (14, 26)','C) [28, 52]','D) (28, 52)'],ans:0,expl:'Para 7 kg: x≥14 semanas. Para 13 kg: x≤26 semanas. Los extremos están incluidos → [14, 26].'},
+];
+
+let state = {
+  xp: 0, streak: 0, examsCompleted: 0, bestScore: 0,
+  trophies: {first:false, pass:false, perfect:false, streak3:false, u2master:false, quick:false, consistent:false, allunits:false},
+  unitsDone: {U1:0, U2:0, U3:0, U4:0, U5:0},
+  current: 0, score: 0, answers: [], shuffled: []
+};
+
+const TROPHIES = [
+  {id:'first', icon:'🏅', name:'Primer intento', desc:'Completa tu primer simulacro', check:()=>state.examsCompleted>=1},
+  {id:'pass', icon:'🏆', name:'Aprobado', desc:'Obtén ≥70% en un examen', check:()=>state.bestScore>=70},
+  {id:'perfect', icon:'💎', name:'Perfecto', desc:'Obtén 100% en un examen', check:()=>state.bestScore===100},
+  {id:'streak3', icon:'🔥', name:'En racha', desc:'3 exámenes aprobados seguidos', check:()=>state.streak>=3},
+  {id:'u2master', icon:'📐', name:'Algebraista', desc:'Responde bien 5 de U2', check:()=>state.unitsDone.U2>=5},
+  {id:'quick', icon:'⚡', name:'Veloz', desc:'Completa 3 simulacros', check:()=>state.examsCompleted>=3},
+  {id:'consistent', icon:'📚', name:'Constante', desc:'Completa 5 simulacros', check:()=>state.examsCompleted>=5},
+  {id:'allunits', icon:'🎯', name:'Integral', desc:'Aprueba 1 examen de cada unidad', check:()=>Object.values(state.unitsDone).every(v=>v>=1)},
+  {id:'best90', icon:'🌟', name:'Casi perfecto', desc:'Obtén ≥90% en un examen', check:()=>state.bestScore>=90},
+];
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+  const map = ['inicio','temas','sinopticos','simulador','trofeos'];
+  const idx = map.indexOf(id);
+  if(idx>=0) document.querySelectorAll('.nav-btn')[idx].classList.add('active');
+  if(id==='trofeos') renderTrophies();
+}
+
+function toggleSynop(header) {
+  const body = header.parentElement.querySelector('.synop-body');
+  const ch = header.querySelector('.synop-chevron');
+  body.classList.toggle('open');
+  ch.classList.toggle('open');
+}
+
+function startQuiz() {
+  state.shuffled = [...ALL_QUESTIONS].sort(()=>Math.random()-0.5).slice(0,15);
+  state.current = 0; state.score = 0; state.answers = [];
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const area = document.getElementById('quiz-area');
+  if(state.current >= state.shuffled.length){ showResult(); return; }
+  const q = state.shuffled[state.current];
+  const pct = Math.round((state.current/state.shuffled.length)*100);
+  area.innerHTML = `
+    <div class="quiz-progress-wrap">
+      <div class="quiz-progress-bar"><div class="quiz-progress-fill" style="width:${pct}%"></div></div>
+      <span class="quiz-counter">${state.current+1}/${state.shuffled.length}</span>
+    </div>
+    <div class="question-card">
+      <span class="question-tag">${q.unit} · ${q.topic}</span>
+      <div class="question-text">${q.q}</div>
+      <div class="options">
+        ${q.opts.map((o,i)=>`<button class="opt-btn" onclick="selectAnswer(${i})" id="opt-${i}">
+          <span class="opt-letter">${String.fromCharCode(65+i)}</span>
+          <span>${o.substring(3)}</span>
+        </button>`).join('')}
+      </div>
+      <div id="feedback" class="feedback"></div>
+    </div>
+    <button class="btn-next" id="btn-next" onclick="nextQuestion()">${state.current+1===state.shuffled.length?'Ver resultados ✓':'Siguiente →'}</button>`;
+}
+
+function selectAnswer(idx) {
+  const q = state.shuffled[state.current];
+  document.querySelectorAll('.opt-btn').forEach(b=>{b.classList.add('locked');b.onclick=null;});
+  const correct = idx === q.ans;
+  document.getElementById('opt-'+idx).classList.add(correct?'correct':'wrong');
+  if(!correct) document.getElementById('opt-'+q.ans).classList.add('correct');
+  const fb = document.getElementById('feedback');
+  fb.className='feedback '+(correct?'correct':'wrong');
+  fb.textContent = (correct?'✓ ¡Correcto! ':'✗ Incorrecto. ')+q.expl;
+  state.answers.push({q:q.q, chosen:idx, correct, ans:q.ans, opts:q.opts, unit:q.unit});
+  if(correct){ state.score++; state.xp+=10; if(state.unitsDone[q.unit]!==undefined) state.unitsDone[q.unit]++; }
+  document.getElementById('xp-display').textContent='XP '+state.xp;
+  document.getElementById('btn-next').classList.add('show');
+}
+
+function nextQuestion(){ state.current++; renderQuestion(); }
+
+function showResult() {
+  state.examsCompleted++;
+  const total = state.shuffled.length;
+  const pct = Math.round((state.score/total)*100);
+  if(pct>=70) state.streak++; else state.streak=0;
+  if(pct>state.bestScore) state.bestScore=pct;
+  document.getElementById('home-score').textContent=state.bestScore+'%';
+  document.getElementById('home-done').textContent=state.examsCompleted;
+  document.getElementById('streak-display').textContent='🔥 '+state.streak;
+  const pass=pct>=70;
+
+  const byUnit={};
+  state.answers.forEach(a=>{
+    if(!byUnit[a.unit]) byUnit[a.unit]={ok:0,total:0};
+    byUnit[a.unit].total++; if(a.correct) byUnit[a.unit].ok++;
+  });
+  const unitRows=Object.entries(byUnit).map(([u,d])=>
+    `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f3f4f6;font-size:13px;">
+      <span style="color:#6b7280;">${u}</span>
+      <span style="font-weight:600;color:${d.ok/d.total>=0.7?'#27500A':'#791F1F'}">${d.ok}/${d.total}</span>
+    </div>`).join('');
+
+  const ansRows=state.answers.map((a,i)=>`
+    <div class="ans-row">
+      <div class="ans-icon ${a.correct?'c':'w'}">${a.correct?'✓':'✗'}</div>
+      <div class="ans-text">
+        ${state.shuffled[i].q.length>70?state.shuffled[i].q.substring(0,70)+'…':state.shuffled[i].q}
+        <div class="ans-note">Tu respuesta: ${a.opts[a.chosen].substring(3)}${!a.correct?' · Correcta: '+a.opts[a.ans].substring(3):''}</div>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('quiz-area').innerHTML=`
+    <div class="result-wrap">
+      <div class="score-ring ${pass?'pass':'fail'}">
+        <div class="score-pct ${pass?'pass':'fail'}">${pct}%</div>
+        <div class="score-lbl">${state.score}/${total} correctas</div>
+      </div>
+      <div class="trophy-banner ${pass?'pass':'fail'}">
+        <div class="trophy-banner-icon">${pass?'🏆':'💪'}</div>
+        <div class="trophy-banner-text">
+          <h3>${pass?'¡Trofeo desbloqueado!':'¡Sigue practicando!'}</h3>
+          <p>${pass?'Superaste el 70%. ¡Estás listo para el extraordinario!':'Necesitas 70% para aprobar. Revisa los cuadros sinópticos.'}</p>
+        </div>
+      </div>
+      <div style="background:#fff;border:1px solid #e8e4ff;border-radius:14px;padding:14px;margin-bottom:14px;">
+        <div style="font-size:13px;font-weight:600;color:#374151;margin-bottom:6px;">Resultados por unidad</div>
+        ${unitRows}
+      </div>
+      <div class="result-actions">
+        <button class="btn-retry" onclick="showScreen('simulador');startQuiz()">▶ Nuevo simulacro</button>
+        <button class="btn-review" onclick="showScreen('sinopticos')">📖 Repasar cuadros sinópticos</button>
+        <button class="btn-review" onclick="showScreen('trofeos')">🏆 Ver mis trofeos</button>
+      </div>
+    </div>
+    <div style="background:#fff;border-radius:14px;border:1px solid #e8e4ff;padding:16px;">
+      <div class="review-title">Detalle de respuestas</div>
+      ${ansRows}
+    </div>`;
+}
+
+function renderTrophies(){
+  const grid=document.getElementById('trophies-grid');
+  grid.innerHTML=TROPHIES.map(t=>{
+    const earned=t.check();
+    return `<div class="trophy-card ${earned?'earned':'locked'}">
+      <div class="t-icon">${t.icon}</div>
+      <div class="t-name">${t.name}</div>
+      <div class="t-desc">${earned?t.desc:'Bloqueado'}</div>
+    </div>`;
+  }).join('');
+  const stats=document.getElementById('stats-list');
+  stats.innerHTML=`
+    <div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid #f3f4f6;"><span style="color:#6b7280;">Mejor puntaje</span><b>${state.bestScore}%</b></div>
+    <div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid #f3f4f6;"><span style="color:#6b7280;">Simulacros completados</span><b>${state.examsCompleted}</b></div>
+    <div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid #f3f4f6;"><span style="color:#6b7280;">Racha actual</span><b>🔥 ${state.streak}</b></div>
+    <div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;"><span style="color:#6b7280;">Puntos XP acumulados</span><b>${state.xp} XP</b></div>`;
+}
+
+showScreen('inicio');
+</script>
+</body>
+</html>
